@@ -95,7 +95,8 @@ class GUI():
         y = case - x*len(self.board)
         self.target = (x, y)
         print("Attack : source (" + str(self.source) + ") target (" + str(self.target))
-        #self.board = Back.oneAttack(self.source, self.target)
+        #####
+        self.board = Back.oneAttack(self.board, self.source, self.target)
         if self.team == self.teamCount:
             self.team = 1
         else:
