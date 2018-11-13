@@ -17,7 +17,7 @@ def distribute(items, cells):
          raise 'Cells must be greater or equals to items !'
 
      while cells > 0:
-         count = 1 + int(randint(0, items - cells) / 10)
+         count = 1 + int(randint(0, items - cells) / 3)
          cells -= 1
          items -= count
          distribution.append(count)

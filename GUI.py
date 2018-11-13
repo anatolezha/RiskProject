@@ -1,5 +1,6 @@
 from tkinter import *
 import start as Back
+import random
 
 class GUI():
     
@@ -32,13 +33,30 @@ class GUI():
                     color = "#0000FF"
                 elif self.board[i][j][0] == 2:
                     color = "#FF0000"
+                elif self.board[i][j][0] == 3:
+                    color = "#00FFFF"
                 self.buttons[index].configure(text=self.board[i][j][1], background=color,
                                          font=('arial', 16, 'bold'), foreground="white")
                 index += 1
 
+    def setPlayerCount(self, root, scale):
+        self.teamCount = scale.get()
+        root.destroy()
+        
     def setGridSize(self, root, scale):
         self.TABLE_SIZE = scale.get()
         root.destroy()
+
+    def askPlayerCount(self, text, minVal, maxVal):
+        root = self.initFrame()
+        s = Scale(root, orient='horizontal', from_=minVal, to=maxVal,
+                  resolution=1, tickinterval=1, sliderlength=20,
+                  troughcolor="#BCF5A9", activebackground="green",
+                  label=text, length=350)
+        s.grid(padx=0, pady=1)
+        b = Button(root, text="Valider", command=lambda : self.setPlayerCount(root, s))
+        b.grid(padx=0, pady=2)
+        root.mainloop()
 
     def askForGridSize(self, text, minVal, maxVal):
         root = self.initFrame()
@@ -78,10 +96,10 @@ class GUI():
         self.target = (x, y)
         print("Attack : source (" + str(self.source) + ") target (" + str(self.target))
         #self.board = Back.oneAttack(self.source, self.target)
-        if self.team == 1:
-            self.team = 2
-        else:
+        if self.team == self.teamCount:
             self.team = 1
+        else:
+            self.team += 1
         self.refreshGrid()
         self.enableUnitsSources()
 
@@ -93,7 +111,10 @@ class GUI():
         for i in range(len(self.buttons)):
             self.buttons[i].configure(state=state)
 
-    def selectEnemisAround(self, case):
+    def changeStateOfOneButton(self, case, state):
+        self.buttons[(case[0]*len(self.board[case[0]]))+case[1]].configure(state=state)
+
+    def countEnemisAround(self, case):
         enemisCount = 0
         for i in range(3):
             for j in range(3):
@@ -104,29 +125,40 @@ class GUI():
                         enemisCount += 1
         return enemisCount
 
-    def enableUnitsSources(self):
-        self.changeAllButtonsState("normal")
-        self.giveButtonsSelectSourceAction()
-        index = 0
+    def selectUnitsSources(self):
+        caseList = []
         for i in range(len(self.board)):
             for j in range(len(self.board[i])):
                 if self.board[i][j][0] != self.team:
-                    self.buttons[(i*len(self.board[i]))+j].configure(state="disabled")
+                    caseList.append((i,j))
                 else:
-                    if self.selectEnemisAround((i, j)) == 0 or self.board[i][j][1] <= 1:
-                        self.buttons[(i*len(self.board[i]))+j].configure(state="disabled")
-                index += 1
+                    if self.countEnemisAround((i, j)) == 0 or self.board[i][j][1] <= 1:
+                        caseList.append((i,j))
+        return(caseList)
 
-    
-    def enableTargetAround(self):
-        enemisCount = 0
+    def selectTargetAround(self):
+        caseList = []
         for i in range(3):
             for j in range(3):
                 y = i + self.source[0] -1
                 x = j + self.source[1] -1
                 if x >= 0 and x < len(self.board) and y >= 0 and y < len(self.board[i]):
                     if self.board[y][x][0] != self.team:
-                        self.buttons[y*len(self.board)+x].configure(state="normal")
+                        caseList.append((y,x))
+        return(caseList)
+
+    def enableUnitsSources(self):
+        self.changeAllButtonsState("normal")
+        self.giveButtonsSelectSourceAction()
+        choices = self.selectUnitsSources()
+        for i in range(len(choices)):
+            self.changeStateOfOneButton(choices[i], "disabled")        
+
+    
+    def enableTargetAround(self):
+        choices = self.selectTargetAround()
+        for i in range(len(choices)):
+            self.changeStateOfOneButton(choices[i], "normal") 
 
     def enableUnitsTargets(self, case):
         self.changeAllButtonsState("disabled")
@@ -144,9 +176,11 @@ class GUI():
         self.UNITS = 3
         self.source = (0, 0)
         self.target = (0, 0)
-        self.team = 1
+        self.teamCount = 0
+        self.team = 0
         
-        self.askForGridSize("Donnez la taille du plateau", 3, 10)
+        self.askPlayerCount("Donnez le nombre de joueurs", 2, 3)
+        self.askForGridSize("Donnez la taille du plateau", self.teamCount+1, 6)
         
         self.ROW_COUNT = self.TABLE_SIZE
         self.COLUMN_COUNT = self.TABLE_SIZE
@@ -164,13 +198,21 @@ class GUI():
         Back.shuffle(self.board)
         print(Back.countPawn(self.board))
         self.board = list(Back.chunks(self.board, int(self.TABLE_SIZE)))
+        #
+        if self.teamCount == 3:
+           self.board[-1][-1] = (3, self.board[-1][-1][1])
+        #
+        
         for i in range(len(self.board)):
             print(self.board[i])
 
         
         root = self.initFrame()
         self.buttons = self.createGrid(root)
+        assert(len(self.buttons) == self.ROW_COUNT*self.COLUMN_COUNT)
         self.displayGrid()
+        self.team = random.randint(1,self.teamCount)
+        print("Team n°" + str(self.team) + " starts. " + str(self.teamCount) + " Players")
         self.refreshGrid()
         self.enableUnitsSources()
         root.mainloop()
