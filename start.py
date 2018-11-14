@@ -28,6 +28,28 @@ def distribute(items, cells):
      shuffle(distribution)
      return distribution
 
+def oneAttack(board, coordCaseAttack, coordCaseDefend):
+    caseAttack = board[coordCaseAttack[0]][coordCaseAttack[1]]
+    caseDefend = board[coordCaseDefend[0]][coordCaseDefend[1]]
+
+    pawnAttack = caseAttack[1]
+    pawnDefend = caseDefend[1]
+    defend = [caseDefend[0],caseDefend[1]]
+    if pawnAttack > pawnDefend:
+        defend[0] = caseAttack[0]#abs(caseDefend[0]-1)
+        pawnDefend = pawnAttack-1-pawnDefend
+        pawnAttack = 1
+    elif pawnDefend > pawnAttack:
+        pawnDefend -= (pawnAttack-1)
+        pawnAttack = 1
+    elif pawnAttack == pawnDefend:
+        pawnAttack = 1
+        pawnDefend = 1
+    defend[1] = pawnDefend
+    board[coordCaseAttack[0]][coordCaseAttack[1]] = (caseAttack[0],pawnAttack)
+    board[coordCaseDefend[0]][coordCaseDefend[1]] = (defend[0],defend[1])
+    return board
+
 def countCase(board):
     caseA = 0
     caseB = 0
