@@ -74,7 +74,7 @@ class GUI():
         winner = [0, 0, 0, 0]#team, ratio, case, pions
         for i in range(self.teamCount):
             stats = self.countGameStats(i+1)
-            if stats[0] > winner[1]:
+            if stats[1] > winner[2]:
                 winner[0] = i+1
                 winner[1] = stats[0]
                 winner[2] = stats[1]
@@ -87,7 +87,7 @@ class GUI():
         Label(root, text="\n***\t\tPartie terminée !\t\t***\n").grid(padx=0, pady=1)
         Label(root, text="Durée : " + str(self.turnCount)).grid(padx=0, pady=2)
         winner = self.selectWinner()
-        Label(root, text="Winner : " + str(winner[0]) + " -> " + str(winner[1]) + "\t(cases : " + str(winner[2]) + " | territoires : " + str(winner[3]) + ")").grid(padx=0, pady=3)
+        Label(root, text="Winner : " + str(winner[0]) + " -> " + str(winner[1]) + "\t(cases : " + str(winner[2]) + " | pions : " + str(winner[3]) + ")").grid(padx=0, pady=3)
         b = Button(root, text="Valider", command=lambda : root.destroy())
         b.grid(padx=0, pady=4)
         root.mainloop()
@@ -151,7 +151,7 @@ class GUI():
 
     def IATurn(self):
         sources = battle.selectUnitsSources(self.board, self.team)
-        if self.isTurnPossible(len(sources)):
+        if self.isTurnPossible(len(sources),1):
             attackInformations = IA.play(self.board, self.team, sources)
             self.source = attackInformations[0]
             self.target = attackInformations[1]
@@ -165,12 +165,13 @@ class GUI():
             self.root.update()
             time.sleep(self.timeToSleep)
             if self.source == self.target:
-                self.isTurnPossible(0)
+                self.isTurnPossible(0,2)
                 if not self.isItFinish:
                     self.newTurn()
                 else:
                     self.displayGameEnd()
             else:
+                self.isTurnPossible(1,2)
                 self.attack()
         else:
             if not self.isItFinish:
@@ -226,12 +227,13 @@ class GUI():
         self.buttons[(case[0]*len(self.board[case[0]]))+case[1]].configure(state=state)
 
     def changeBgColorOfOneButton(self, case, bgColor):
-        self.buttons[(case[0]*len(self.board[case[0]]))+case[1]].configure(background=bgColor)
+        self.buttons[(case[0]*len(self.board[case[0]]))+case[1]].configure(background=bgColor, foreground="black")
 
-    def isTurnPossible(self, possible):
+    def isTurnPossible(self, possible, step):
         print(possible)
         if possible != 0:
-            self.skipTurnCount = 0
+            if step != 1:
+                self.skipTurnCount = 0
             return True
         else:
             self.skipTurnCount += 1
@@ -239,6 +241,7 @@ class GUI():
             print("Pas de choix nb : " + str(self.skipTurnCount))
             if self.skipTurnCount == self.teamCount:
                 self.isItFinish = True
+                input()
                 print("Partie Finie")
             return False
 
@@ -277,7 +280,7 @@ class GUI():
         self.changeAllButtonsState("disabled")
         self.giveButtonsSelectSourceAction()
         choices = battle.selectUnitsSources(self.board, self.team)
-        if self.isTurnPossible(len(choices)):
+        if self.isTurnPossible(len(choices),1):
             for i in range(len(choices)):
                 self.changeStateOfOneButton(choices[i], "normal")
         else:
@@ -289,7 +292,7 @@ class GUI():
     
     def enableTargetAround(self):
         choices = battle.selectTargetAround(self.board, self.team, self.source)
-        if self.isTurnPossible(len(choices)):
+        if self.isTurnPossible(len(choices),2):
             for i in range(len(choices)):
                 self.changeStateOfOneButton(choices[i], "normal")
         else:
@@ -353,6 +356,12 @@ class GUI():
            self.board[-1][-1] = (3, self.UNITS)#(3, self.board[-1][-1][1])
         #
         
+##        self.board = [[(2,1),(2,1),(2,1),(1,1),(1,1),(2,1)],
+##                      [(1,1),(3,1),(3,1),(2,1),(1,1),(1,1)],
+##                      [(3,1),(3,2),(3,1),(2,1),(2,1),(2,1)],
+##                      [(3,1),(3,1),(3,1),(3,1),(2,1),(2,1)],
+##                      [(1,1),(3,1),(1,1),(3,1),(2,1),(1,2)],
+##                      [(1,1),(2,1),(3,1),(3,1),(3,1),(3,1)]]
         for i in range(len(self.board)):
             print(self.board[i])
 
