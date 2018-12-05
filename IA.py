@@ -18,12 +18,15 @@ def testTarget(board, team, sources):
 
 def play(board, team, sources):
     if(testTarget(board, team, sources)):
-        targets = battle.selectTargetAround(board, team, sources[0])
-        for target in targets : 
-            actualBoard = Back.oneAttack(deepcopy(board), sources[0], target)
-            selectedSource = sources[0]
-            selectedTarget = target
-            break
+        for source in sources :
+            targets = battle.selectTargetAround(board, team, source)
+            if(len(targets)>0):
+                for target in targets : 
+                    actualBoard = Back.oneAttack(deepcopy(board), sources[0], target)
+                    selectedSource = sources[0]
+                    selectedTarget = target
+                    break
+                break
 
         for source in sources : 
             targets = battle.selectTargetAround(board, team, source)
