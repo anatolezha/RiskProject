@@ -7,8 +7,7 @@ import time
 
 class GUI():
     
-    def initFrame(self):
-        
+    def initFrame(self):  
         root = Tk()
         return(root)
 

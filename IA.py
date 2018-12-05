@@ -1,28 +1,41 @@
 import random
 import battle
+import start as Back
+from copy import *
 
-#team est un int du numéro du joueur
-#sources est un tableau de tuples qui contiennent les coordonnées x et y de chaque case source possible
+
+def evaluate(board, team):
+    nbCase = Back.countCaseTeam(board, team)
+    nbPawn = Back.countPawnTeam(board, team)
+    return nbPawn/nbCase
+
+def testTarget(board, team, sources):
+    for source in sources :
+        targets = battle.selectTargetAround(board, team, source)
+        if(len(targets)>0):
+            return True
+    return False
+
 def play(board, team, sources):
-    # sélectionne par défaut la première source (un tuple des coordonnées x et y)
-    selectedSource = sources[0]
+    if(testTarget(board, team, sources)):
+        targets = battle.selectTargetAround(board, team, sources[0])
+        for target in targets : 
+            actualBoard = Back.oneAttack(deepcopy(board), sources[0], target)
+            selectedSource = sources[0]
+            selectedTarget = target
+            break
 
-    #Code de séléction de la source (A Modifié)
-    if len(sources) > 1:
-        selectedSource = sources[random.randint(0,len(sources)-1)]
-
-    #Sélectionne toutes les cibles (tableau de tuples qui contiennent les coordonnées x et y)
-    #en fonction d'une source
-    targets = battle.selectTargetAround(board, team, selectedSource)
-
-    #Code de séléction de la source (A Modifié)
-    if len(targets) > 1:
-        selectedTarget = targets[random.randint(0,len(targets)-1)]
-
-    #Sécurité à garder pour que le programme fonctionne
-    elif len(targets) > 0:
-        selectedTarget = targets[0]
+        for source in sources : 
+            targets = battle.selectTargetAround(board, team, source)
+            for target in targets : 
+                newBoard = Back.oneAttack(deepcopy(board), source, target)    
+                if evaluate(newBoard, team) > evaluate(actualBoard, team):
+                    actualBoard = newBoard
+                    selectedSource = source
+                    selectedTarget = target
     else:
+        selectedTarget = source[0]
         selectedTarget = selectedSource
+
     return([selectedSource, selectedTarget])
     

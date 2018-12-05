@@ -31,7 +31,6 @@ def distribute(items, cells):
 def oneAttack(board, coordCaseAttack, coordCaseDefend):
     caseAttack = board[coordCaseAttack[0]][coordCaseAttack[1]]
     caseDefend = board[coordCaseDefend[0]][coordCaseDefend[1]]
-
     pawnAttack = caseAttack[1]
     pawnDefend = caseDefend[1]
     defend = [caseDefend[0],caseDefend[1]]
@@ -69,6 +68,18 @@ def countPawn(board):
         elif i[0] == 2:
             pawnB += i[1]
     return (pawnA, pawnB)
+
+def countCaseTeam(board, team):
+    for i in board:
+        if i == team:
+            case+= 1
+    return case
+
+def countPawnTeam(board, team):
+    for i in board:
+        if i[0] == team:
+            pawn += i[1]
+    return pawn
 
 def createBoard(size):
     square = size * size
