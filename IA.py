@@ -37,7 +37,7 @@ def play(board, team, sources):
                     selectedSource = source
                     selectedTarget = target
     else:
-        selectedTarget = sources[0]
+        selectedSource = sources[0]
         selectedTarget = selectedSource
 
     return([selectedSource, selectedTarget])
