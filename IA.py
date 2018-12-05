@@ -17,17 +17,19 @@ def testTarget(board, team, sources):
     return False
 
 def play(board, team, sources):
+    #Test si des targets existent pour chaque source
     if(testTarget(board, team, sources)):
+        #bloc pour faire premiere attaque
         for source in sources :
             targets = battle.selectTargetAround(board, team, source)
             if(len(targets)>0):
                 for target in targets : 
-                    actualBoard = Back.oneAttack(deepcopy(board), sources[0], target)
-                    selectedSource = sources[0]
+                    actualBoard = Back.oneAttack(deepcopy(board), source, target)
+                    selectedSource = source
                     selectedTarget = target
                     break
                 break
-
+        #Determine la meilleur attaque
         for source in sources : 
             targets = battle.selectTargetAround(board, team, source)
             for target in targets : 
