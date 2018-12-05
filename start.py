@@ -70,15 +70,19 @@ def countPawn(board):
     return (pawnA, pawnB)
 
 def countCaseTeam(board, team):
-    for i in board:
-        if i == team:
-            case+= 1
+    case = 0
+    for line in board:
+        for i in line:
+            if i[0] == team:
+                case += 1
     return case
 
 def countPawnTeam(board, team):
-    for i in board:
-        if i[0] == team:
-            pawn += i[1]
+    pawn = 0
+    for line in board:
+        for i in line:
+            if i[0] == team:
+                pawn += i[1]
     return pawn
 
 def createBoard(size):
@@ -94,18 +98,5 @@ def createBoard(size):
         B = [(1)] * int(square/2)
         B += [(2)] * int(square/2)
     return list(B)
-
-if __name__ == "__main__":
-    size = int(input("Veuillez enregistrer une taille\n"))
-    nbPawn = int(input("Nombre de pion par joueur, doit être supérieur au nombre de case ("+str(size*size)+")\n"))
-    repartCase = createBoard(size)
-    casePerPlayer = countCase(repartCase)
-    repartPawn = distribute(nbPawn, casePerPlayer[0]) + distribute(nbPawn, casePerPlayer[1])
-    board = list(zip(repartCase, repartPawn))
-    shuffle(board)
-    print(countPawn(board))
-    board = list(chunks(board, int(size)))
-    for i in range(len(board)):
-        print(board[i])
 
 
