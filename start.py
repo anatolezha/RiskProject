@@ -98,5 +98,3 @@ def createBoard(size):
         B = [(1)] * int(square/2)
         B += [(2)] * int(square/2)
     return list(B)
-
-
