@@ -70,12 +70,14 @@ def countPawn(board):
     return (pawnA, pawnB)
 
 def countCaseTeam(board, team):
+    case = 0
     for i in board:
         if i == team:
             case+= 1
     return case
 
 def countPawnTeam(board, team):
+    pawn = 0
     for i in board:
         if i[0] == team:
             pawn += i[1]
