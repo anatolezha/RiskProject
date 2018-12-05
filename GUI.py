@@ -244,37 +244,6 @@ class GUI():
                 print("Partie Finie")
             return False
 
-##    def countEnemisAround(self, board, team, case):
-##        enemisCount = 0
-##        for i in range(3):
-##            for j in range(3):
-##                y = i + case[0] -1
-##                x = j + case[1] -1
-##                if x >= 0 and x < len(board) and y >= 0 and y < len(board[i]):
-##                    if board[y][x][0] != team:
-##                        enemisCount += 1
-##        return enemisCount
-##
-##    def selectUnitsSources(self, board, team):
-##        caseList = []
-##        for i in range(len(board)):
-##            for j in range(len(board[i])):
-##                if board[i][j][0] == team:
-##                    if countEnemisAround(board, team, (i, j)) != 0 and board[i][j][1] > 1:
-##                        caseList.append((i,j))
-##        return(caseList)
-
-##    def selectTargetAround(self, board, team, source):
-##        caseList = []
-##        for i in range(3):
-##            for j in range(3):
-##                y = i + source[0] -1
-##                x = j + source[1] -1
-##                if x >= 0 and x < len(board) and y >= 0 and y < len(board[i]):
-##                    if board[y][x][0] != team and board[source[0]][source[1]][1] != board[y][x][1]+1:
-##                        caseList.append((y,x))
-##        return(caseList)
-
     def enableUnitsSources(self):
         self.changeAllButtonsState("disabled")
         self.giveButtonsSelectSourceAction()
@@ -325,7 +294,8 @@ class GUI():
         self.IA_teams = []
         self.timeToSleep = 0.5
         
-        self.askPlayerCount("Donnez le nombre de joueurs", 2, 3)
+        #self.askPlayerCount("Donnez le nombre de joueurs", 2, 3)
+        self.teamCount = 2
         self.askIACount("Parmis ces joueurs, donnez le nombre d'IA", 0, self.teamCount)
         self.askForGridSize("Donnez la taille du plateau", self.teamCount+1, 6)
         
